@@ -8,6 +8,7 @@ import { FaTrashAlt } from "react-icons/fa";
 import { MdCastle, MdTerrain } from "react-icons/md";
 import { LuScrollText } from "react-icons/lu";
 import { FaClipboardList, FaMapPin } from "react-icons/fa6";
+import { HiMiniSpeakerWave } from "react-icons/hi2";
 import styles from "./Forge.module.css";
 import { base64ArrayBuffer } from "./utils";
 
@@ -92,6 +93,8 @@ function FilePreview({ file, onDelete, onRename }) {
         alt=""
       />
     );
+  } else if (file.type?.genericType === "audio") {
+    icon = <HiMiniSpeakerWave />;
   } else if (/\.cs$/i.test(file.path)) {
     icon = <LuScrollText />;
   } else if (/\.mis$/i.test(file.path)) {
@@ -110,14 +113,16 @@ function FilePreview({ file, onDelete, onRename }) {
         className={styles.Path}
         onDoubleClick={() => {
           let newPath = window.prompt(`Rename file (${file.path}):`, file.path);
-          newPath = newPath
-            .trim()
-            .replace(/\/+/g, "/")
-            .replace(/^\//, "")
-            .replace(/\/$/, "")
-            .trim();
-          if (newPath !== file.path) {
-            onRename(file.path, newPath);
+          if (newPath) {
+            newPath = newPath
+              .trim()
+              .replace(/\/+/g, "/")
+              .replace(/^\//, "")
+              .replace(/\/$/, "")
+              .trim();
+            if (newPath && newPath !== file.path) {
+              onRename(file.path, newPath);
+            }
           }
         }}
       >
