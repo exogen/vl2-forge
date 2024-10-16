@@ -5,6 +5,9 @@ import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import orderBy from "lodash.orderby";
 import { FaTrashAlt } from "react-icons/fa";
+import { MdCastle, MdTerrain } from "react-icons/md";
+import { LuScrollText } from "react-icons/lu";
+import { FaClipboardList, FaMapPin } from "react-icons/fa6";
 import styles from "./Forge.module.css";
 import { base64ArrayBuffer } from "./utils";
 
@@ -19,11 +22,21 @@ function detectBestPath(path) {
     folder = "";
     basename = parts[0];
   }
+  if (folder) {
+    return `${folder}/${basename}`;
+  }
   if (
     /\.(l|m|h)(male|female|bioderm)\.png$/i.test(basename) ||
-    /^(vehicle|weapon)_.+png$/i.test(basename)
+    /^(vehicle|weapon)_.+png$/i.test(basename) ||
+    /^dcase\d\d\.png$/i.test(basename)
   ) {
     folder = "textures/skins";
+  } else if (/\.(ter|spn)$/i.test(basename)) {
+    folder = "terrains";
+  } else if (/\.mis$/i.test(basename)) {
+    folder = "missions";
+  } else if (/\.dif$/i.test(basename)) {
+    folder = "interiors";
   }
   if (folder) {
     return `${folder}/${basename}`;
@@ -68,7 +81,7 @@ function detectFileType(file): FileType | null {
   return null;
 }
 
-function FilePreview({ file, onDelete }) {
+function FilePreview({ file, onDelete, onRename }) {
   let icon = null;
   if (file.dataUri && file.type?.genericType === "image") {
     icon = (
@@ -79,11 +92,37 @@ function FilePreview({ file, onDelete }) {
         alt=""
       />
     );
+  } else if (/\.cs$/i.test(file.path)) {
+    icon = <LuScrollText />;
+  } else if (/\.mis$/i.test(file.path)) {
+    icon = <FaClipboardList />;
+  } else if (/\.dif$/i.test(file.path)) {
+    icon = <MdCastle />;
+  } else if (/\.ter$/i.test(file.path)) {
+    icon = <MdTerrain />;
+  } else if (/\.spn$/i.test(file.path)) {
+    icon = <FaMapPin />;
   }
   return (
     <div className={styles.File}>
       <span className={styles.IconContainer}>{icon}</span>{" "}
-      <span className={styles.Path}>{file.path}</span>
+      <span
+        className={styles.Path}
+        onDoubleClick={() => {
+          let newPath = window.prompt(`Rename file (${file.path}):`, file.path);
+          newPath = newPath
+            .trim()
+            .replace(/\/+/g, "/")
+            .replace(/^\//, "")
+            .replace(/\/$/, "")
+            .trim();
+          if (newPath !== file.path) {
+            onRename(file.path, newPath);
+          }
+        }}
+      >
+        {file.path}
+      </span>
       <button
         className={styles.DeleteButton}
         type="button"
@@ -276,6 +315,17 @@ export function Forge() {
     });
   }, []);
 
+  const handleRename = useCallback((oldPath, newPath) => {
+    setFiles((files) => {
+      const file = files.get(oldPath);
+      const newFile = { ...file, path: newPath };
+      const newFiles = new Map(files);
+      newFiles.delete(oldPath);
+      newFiles.set(newPath, newFile);
+      return newFiles;
+    });
+  }, []);
+
   return (
     <>
       <section className={styles.Forge} {...getRootProps()}>
@@ -295,7 +345,11 @@ export function Forge() {
               {fileList.map((file) => {
                 return (
                   <li key={file.path}>
-                    <FilePreview file={file} onDelete={handleDelete} />
+                    <FilePreview
+                      file={file}
+                      onDelete={handleDelete}
+                      onRename={handleRename}
+                    />
                   </li>
                 );
               })}

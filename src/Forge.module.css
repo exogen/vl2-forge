@@ -218,6 +218,8 @@
   display: grid;
   place-content: center;
   width: 24px;
+  font-size: 22px;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .PreviewIcon {
@@ -231,6 +233,7 @@
   background: rgba(0, 0, 0, 0.3);
   padding: 3px 8px;
   border-radius: 8px;
+  user-select: none;
 }
 
 @media (max-width: 767px) {
