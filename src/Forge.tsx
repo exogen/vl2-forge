@@ -7,7 +7,30 @@ import orderBy from "lodash.orderby";
 import { FaTrashAlt } from "react-icons/fa";
 import styles from "./Forge.module.css";
 import { base64ArrayBuffer } from "./utils";
-import { hasUncaughtExceptionCaptureCallback } from "process";
+
+function detectBestPath(path) {
+  const parts = path.split("/");
+  let folder = "";
+  let basename = "";
+  if (parts.length > 1) {
+    folder = parts.slice(0, -1).join("/");
+    basename = parts[parts.length - 1];
+  } else {
+    folder = "";
+    basename = parts[0];
+  }
+  if (
+    /\.(l|m|h)(male|female|bioderm)\.png$/i.test(basename) ||
+    /^(vehicle|weapon)_.+png$/i.test(basename)
+  ) {
+    folder = "textures/skins";
+  }
+  if (folder) {
+    return `${folder}/${basename}`;
+  } else {
+    return basename;
+  }
+}
 
 function detectFileType(file): FileType | null {
   if (file.type) {
@@ -94,9 +117,10 @@ type FileEntry = {
 async function handleZipFile(file) {
   const zip = await JSZip.loadAsync(file);
   const map = new Map<string, FileEntry>();
-  for (const path in zip.files) {
+  for (let path in zip.files) {
     const fileObj = zip.files[path];
     if (!fileObj.dir) {
+      path = detectBestPath(path);
       const buffer = await fileObj.async("arraybuffer");
       const fileEntry = {
         path,
@@ -133,6 +157,7 @@ async function handleOtherFile(file) {
   } else {
     return map;
   }
+  path = detectBestPath(path);
   const buffer = await new Promise<ArrayBuffer>((resolve, reject) => {
     const reader = new FileReader();
     reader.addEventListener("load", (event) => {
