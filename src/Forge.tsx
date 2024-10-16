@@ -361,7 +361,9 @@ export function Forge() {
             </ul>
           ) : (
             <div className={styles.EmptyMessage}>
-              Drop files onto the page or press the add button!
+              Drop files onto the page or press the add button. No need to
+              extract existing .vl2 files first – just drop ‘em in and it’ll do
+              that for you!
             </div>
           )}
         </div>

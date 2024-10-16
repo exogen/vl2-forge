@@ -150,6 +150,8 @@
 .EmptyMessage {
   align-self: center;
   text-align: center;
+  text-wrap: balance;
+  line-height: 1.75;
 }
 
 .AddButton {
