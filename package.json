@@ -7,7 +7,7 @@
   "keywords": [],
   "main": "index.js",
   "scripts": {
-    "dev": "next dev demo",
+    "dev": "next dev",
     "build": "npm run build:pages",
     "build:pages": "next build && touch docs/.nojekyll"
   },
