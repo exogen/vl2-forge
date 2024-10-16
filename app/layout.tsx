@@ -1,4 +1,4 @@
-import { departureMono } from "../src/fonts";
+import { alagard, departureMono, lora } from "../src/fonts";
 import "./global.css";
 
 export const metadata = {
@@ -12,7 +12,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={departureMono.variable}>
+    <html
+      lang="en"
+      className={`${departureMono.variable} ${alagard.variable} ${lora.variable}`}
+    >
       <body>{children}</body>
     </html>
   );
