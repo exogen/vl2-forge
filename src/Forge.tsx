@@ -4,7 +4,7 @@ import { useDropzone } from "react-dropzone";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import orderBy from "lodash.orderby";
-import { FaTrashAlt } from "react-icons/fa";
+import { FaTrashAlt, FaGithub } from "react-icons/fa";
 import { MdCastle, MdTerrain } from "react-icons/md";
 import { LuScrollText } from "react-icons/lu";
 import { FaClipboardList, FaMapPin } from "react-icons/fa6";
@@ -335,6 +335,12 @@ export function Forge() {
     <>
       <section className={styles.Forge} {...getRootProps()}>
         <header className={styles.Header}>
+          <a
+            className={styles.HeaderLink}
+            href="https://github.com/exogen/vl2-forge"
+          >
+            <FaGithub aria-label="GitHub" />
+          </a>
           <img
             width={210}
             height={188}
@@ -369,6 +375,12 @@ export function Forge() {
         </div>
       </section>
       <footer className={styles.Footer}>
+        <a
+          className={styles.FooterLink}
+          href="https://github.com/exogen/vl2-forge"
+        >
+          <FaGithub aria-label="GitHub" />
+        </a>
         <form
           onSubmit={async (event) => {
             event.preventDefault();

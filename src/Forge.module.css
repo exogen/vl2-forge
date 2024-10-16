@@ -14,8 +14,10 @@
 .Footer {
   position: relative;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
+  gap: 12px;
   padding: 40px;
   background: rgba(59, 55, 49, 0.8);
 
@@ -30,7 +32,6 @@
 }
 
 .Footer::before {
-  display: block;
   content: "";
   position: absolute;
   top: -3px;
@@ -65,6 +66,7 @@
   justify-content: center;
   flex-wrap: wrap;
   gap: 12px;
+  margin: 0 auto;
 }
 
 .NameInput {
@@ -240,6 +242,29 @@
   user-select: none;
 }
 
+.HeaderLink {
+  display: none;
+  margin-left: 0;
+  place-content: center;
+  flex: 0 0 auto;
+  color: rgba(53, 57, 75, 0.8);
+  text-decoration: none;
+  font-size: 48px;
+}
+
+.HeaderLink svg {
+  border: 0;
+}
+
+.FooterLink {
+  display: grid;
+  margin-left: 0;
+  place-content: center;
+  flex: 0 0 auto;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 40px;
+}
+
 @media (max-width: 767px) {
   .Forge {
     grid-template-columns: 1fr;
@@ -255,5 +280,13 @@
   .Header img {
     width: auto;
     max-height: 96px;
+  }
+
+  .HeaderLink {
+    display: grid;
+  }
+
+  .FooterLink {
+    display: none;
   }
 }
