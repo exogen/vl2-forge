@@ -9,7 +9,7 @@ export type FileType = {
 export type FileEntry = {
   path: string;
   buffer: ArrayBuffer;
-  dataUri: string | null;
+  blobUri: string | null;
   date: Date | null;
   unixPermissions: string | number | null;
   dosPermissions: number | null;
@@ -146,8 +146,8 @@ export async function handleZipFile(file) {
       const buffer = await fileObj.async("arraybuffer");
       const fileEntry = {
         path,
-        buffer: buffer,
-        dataUri: null,
+        buffer,
+        blobUri: null,
         date: fileObj.date,
         unixPermissions: fileObj.unixPermissions,
         dosPermissions: fileObj.dosPermissions,
@@ -157,8 +157,12 @@ export async function handleZipFile(file) {
         fileEntry.type?.genericType === "image" ||
         fileEntry.type?.genericType === "audio"
       ) {
-        const base64String = await fileObj.async("base64");
-        fileEntry.dataUri = `data:${fileEntry.type.mimeType};base64,${base64String}`;
+        // const base64String = await fileObj.async("base64");
+        // fileEntry.dataUri = `data:${fileEntry.type.mimeType};base64,${base64String}`;
+        const blob = new Blob([buffer], {
+          type: fileEntry.type?.mimeType ?? "",
+        });
+        fileEntry.blobUri = URL.createObjectURL(blob);
       }
       map.set(path, fileEntry);
     }
@@ -190,18 +194,15 @@ export async function handleOtherFile(file) {
   const fileEntry = {
     path,
     buffer,
-    dataUri: null,
+    blobUri: null,
     date: null,
     unixPermissions: null,
     dosPermissions: null,
     type: detectFileType(file),
   };
-  if (
-    fileEntry.type?.genericType === "image" ||
-    fileEntry.type?.genericType === "audio"
-  ) {
-    const base64String = base64ArrayBuffer(buffer);
-    fileEntry.dataUri = `data:${fileEntry.type.mimeType};base64,${base64String}`;
+  if (fileEntry.type?.genericType === "image") {
+    // const base64String = base64ArrayBuffer(buffer);
+    fileEntry.blobUri = URL.createObjectURL(file);
   }
   map.set(path, fileEntry);
   return map;

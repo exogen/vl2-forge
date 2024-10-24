@@ -44,8 +44,10 @@ export function Forge() {
     });
     setLoadingCount((count) => count - 1);
   }, []);
+
   const { getRootProps, getInputProps, open, isDragActive } = useDropzone({
     noClick: true,
+    noKeyboard: true,
     onDrop,
   });
 

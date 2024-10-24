@@ -10,11 +10,11 @@ import styles from "./FileItem.module.css";
 
 export function FileItem({ file, onDelete, onRename }) {
   const icon = useMemo(() => {
-    if (file.dataUri && file.type?.genericType === "image") {
+    if (file.blobUri && file.type?.genericType === "image") {
       return (
         <img
           className={styles.PreviewIcon}
-          src={file.dataUri}
+          src={file.blobUri}
           width={24}
           alt=""
         />

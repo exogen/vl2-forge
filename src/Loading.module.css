@@ -22,7 +22,7 @@
   justify-content: center;
   width: 100%;
   color: rgb(232, 194, 154);
-  background: rgba(0, 0, 0, 0.95);
+  background: #000;
   mix-blend-mode: hard-light;
   font-family: var(--font-alagard);
   font-size: 40px;
