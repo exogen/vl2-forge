@@ -2,16 +2,18 @@
   display: flex;
   align-items: stretch;
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   width: 400px;
+  max-width: 100%;
   height: 120px;
-  transform: translate(-50%, -50%);
+  margin: auto;
   background: url("../public/fire1.gif");
   background-repeat: no-repeat;
   background-size: 100% 100%;
   border-radius: 10px;
-  z-index: 2;
   text-align: center;
   overflow: hidden;
 }
