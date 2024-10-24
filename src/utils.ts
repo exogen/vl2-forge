@@ -1,3 +1,21 @@
+import JSZip from "jszip";
+import { saveAs } from "file-saver";
+
+export type FileType = {
+  mimeType: string;
+  genericType: string | null;
+};
+
+export type FileEntry = {
+  path: string;
+  buffer: ArrayBuffer;
+  dataUri: string | null;
+  date: Date | null;
+  unixPermissions: string | number | null;
+  dosPermissions: number | null;
+  type: FileType | null;
+};
+
 // Converts an ArrayBuffer directly to base64, without any intermediate 'convert to string then
 // use window.btoa' step. According to my tests, this appears to be a faster approach:
 // http://jsperf.com/encoding-xhr-image-data/5
@@ -46,4 +64,173 @@ export function base64ArrayBuffer(arrayBuffer) {
     base64 += encodings[a] + encodings[b] + encodings[c] + "=";
   }
   return base64;
+}
+
+export function detectBestPath(path) {
+  const parts = path.split("/");
+  let folder = "";
+  let basename = "";
+  if (parts.length > 1) {
+    folder = parts.slice(0, -1).join("/");
+    basename = parts[parts.length - 1];
+  } else {
+    folder = "";
+    basename = parts[0];
+  }
+  if (folder) {
+    return `${folder}/${basename}`;
+  }
+  if (
+    /\.(l|m|h)(male|female|bioderm)\.png$/i.test(basename) ||
+    /^(vehicle|weapon)_.+png$/i.test(basename) ||
+    /^dcase\d\d\.png$/i.test(basename)
+  ) {
+    folder = "textures/skins";
+  } else if (/\.(ter|spn)$/i.test(basename)) {
+    folder = "terrains";
+  } else if (/\.mis$/i.test(basename)) {
+    folder = "missions";
+  } else if (/\.dif$/i.test(basename)) {
+    folder = "interiors";
+  }
+  if (folder) {
+    return `${folder}/${basename}`;
+  } else {
+    return basename;
+  }
+}
+
+export function detectFileType(file): FileType | null {
+  if (file.type) {
+    if (/^image\//i.test(file.type)) {
+      return { mimeType: file.type, genericType: "image" };
+    } else if (/^audio\//i.test(file.type)) {
+      return { mimeType: file.type, genericType: "audio" };
+    }
+  }
+  if (/\.png$/i.test(file.name)) {
+    return { mimeType: "image/png", genericType: "image" };
+  } else if (/\.jpg$/i.test(file.name)) {
+    return { mimeType: "image/jpeg", genericType: "image" };
+  } else if (/\.bmp$/i.test(file.name)) {
+    return { mimeType: "image/bmp", genericType: "image" };
+  } else if (/\.webp$/i.test(file.name)) {
+    return { mimeType: "image/webp", genericType: "image" };
+  } else if (/\.gif$/i.test(file.name)) {
+    return { mimeType: "image/gif", genericType: "image" };
+  } else if (/\.tiff$/i.test(file.name)) {
+    return { mimeType: "image/tiff", genericType: "image" };
+  } else if (/\.svg$/i.test(file.name)) {
+    return { mimeType: "image/svg+xml", genericType: "image" };
+  } else if (/\.wav$/i.test(file.name)) {
+    return { mimeType: "audio/wav", genericType: "audio" };
+  } else if (/\.mp3$/i.test(file.name)) {
+    return { mimeType: "audio/mpeg", genericType: "audio" };
+  }
+  if (file.type) {
+    return {
+      mimeType: file.type,
+      genericType: null,
+    };
+  }
+  return null;
+}
+
+export async function handleZipFile(file) {
+  const zip = await JSZip.loadAsync(file);
+  const map = new Map<string, FileEntry>();
+  for (let path in zip.files) {
+    const fileObj = zip.files[path];
+    if (!fileObj.dir) {
+      path = detectBestPath(path);
+      const buffer = await fileObj.async("arraybuffer");
+      const fileEntry = {
+        path,
+        buffer: buffer,
+        dataUri: null,
+        date: fileObj.date,
+        unixPermissions: fileObj.unixPermissions,
+        dosPermissions: fileObj.dosPermissions,
+        type: detectFileType(fileObj),
+      };
+      if (
+        fileEntry.type?.genericType === "image" ||
+        fileEntry.type?.genericType === "audio"
+      ) {
+        const base64String = await fileObj.async("base64");
+        fileEntry.dataUri = `data:${fileEntry.type.mimeType};base64,${base64String}`;
+      }
+      map.set(path, fileEntry);
+    }
+  }
+  return map;
+}
+
+export async function handleOtherFile(file) {
+  const map = new Map();
+  let path;
+  if (file.path) {
+    path = file.path;
+    if (path.startsWith("/")) {
+      path = path.slice(1);
+    }
+  } else if (file.name) {
+    path = file.name;
+  } else {
+    return map;
+  }
+  path = detectBestPath(path);
+  const buffer = await new Promise<ArrayBuffer>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.addEventListener("load", (event) => {
+      resolve(event.target.result as ArrayBuffer);
+    });
+    reader.readAsArrayBuffer(file);
+  });
+  const fileEntry = {
+    path,
+    buffer,
+    dataUri: null,
+    date: null,
+    unixPermissions: null,
+    dosPermissions: null,
+    type: detectFileType(file),
+  };
+  if (
+    fileEntry.type?.genericType === "image" ||
+    fileEntry.type?.genericType === "audio"
+  ) {
+    const base64String = base64ArrayBuffer(buffer);
+    fileEntry.dataUri = `data:${fileEntry.type.mimeType};base64,${base64String}`;
+  }
+  map.set(path, fileEntry);
+  return map;
+}
+
+export async function handleInputFile(file) {
+  if (/\.(zip|vl2)$/i.test(file.name)) {
+    return handleZipFile(file);
+  } else {
+    return handleOtherFile(file);
+  }
+}
+
+export function createZipFile(files: Array<FileEntry>) {
+  const zip = new JSZip();
+  for (const file of files) {
+    zip.file(file.path, file.buffer, {
+      date: file.date,
+      dosPermissions: file.dosPermissions,
+      unixPermissions: file.unixPermissions,
+    });
+  }
+  return zip;
+}
+
+export async function saveZipFile(zip: JSZip, name: string) {
+  const blob = await zip.generateAsync({
+    type: "blob",
+    mimeType: "application/octet-stream",
+  });
+  saveAs(blob, name);
 }

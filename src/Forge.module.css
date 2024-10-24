@@ -1,24 +1,25 @@
 .Forge {
-  flex: 1 0 auto;
+  flex: 1 1 100%;
   display: grid;
   grid-template-columns: auto 1fr;
-  grid-template-rows: 1fr;
+  grid-template-rows: 1fr auto;
   align-content: stretch;
   font-family: var(--font-departure), monospace;
   color: #fff;
-  text-shadow: 2px 1px 0 rgba(0, 0, 0, 1);
   padding: 20px;
   gap: 20px;
+  overflow: auto;
 }
 
 .Footer {
   position: relative;
+  grid-column: span 2;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: 12px;
-  padding: 40px;
+  padding: 32px 40px;
   background: rgba(59, 55, 49, 0.8);
 
   border-image-slice: 18 26 26 23;
@@ -60,84 +61,15 @@
   pointer-events: none;
 }
 
-.Footer form {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin: 0 auto;
-}
-
-.NameInput {
-  position: relative;
-  font-size: 18px;
-  font-family: var(--font-lora);
-  font-weight: 500;
-  font-style: italic;
-  line-height: 1.25;
-}
-
-.NameInput input {
-  display: block;
-  min-width: 240px;
-  max-width: 100%;
-  min-height: 46px;
-  background: #fff;
-  color: #333;
-  font-size: inherit;
-  font-family: inherit;
-  font-weight: inherit;
-  font-style: inherit;
-  line-height: inherit;
-  padding: 2px 50px 2px 0;
-  text-indent: 10px;
-}
-
-.NameInput::after {
-  display: grid;
-  place-content: center;
-  content: ".vl2";
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 50px;
-  color: #999;
-}
-
-.DownloadButton {
-  border: 0;
-  margin: 0;
-  padding: 0 12px 0 12px;
-  min-width: 128px;
-  min-height: 46px;
-  font-family: var(--font-alagard), monospace;
-  font-size: 24px;
-  font-style: normal;
-  font-weight: normal;
-  line-height: 1;
-  border-radius: 2px;
-  background: url("../public/button.png") transparent;
-  background-repeat: no-repeat;
-  background-size: 150% 190%;
-  background-position: 50% 50%;
-  border-top: 3px solid rgba(255, 145, 105, 0.5);
-  border-left: 3px solid rgba(255, 178, 150, 0.5);
-  border-right: 3px solid rgba(36, 14, 14, 0.7);
-  border-bottom: 3px solid rgba(36, 14, 14, 0.7);
-  color: #ffffff;
-  text-shadow: 0 0 5px rgba(255, 226, 82, 0.358), 2px 3px 0 rgba(0, 0, 0, 0.5);
-  cursor: pointer;
-}
-
 .ListArea {
-  display: flex;
+  position: relative;
+  display: grid;
   align-items: center;
-  justify-content: center;
+  justify-content: stretch;
   padding: 32px;
   background: rgba(2, 2, 84, 0.252);
   border-radius: 12px;
+  overflow: auto;
 }
 
 .FileList {
@@ -148,10 +80,10 @@
   margin: 0;
   padding: 0;
   list-style: none;
+  text-shadow: 2px 1px 0 rgba(0, 0, 0, 1);
 }
 
 .EmptyMessage {
-  align-self: center;
   text-align: center;
   text-wrap: balance;
   line-height: 1.75;
@@ -191,57 +123,6 @@
   gap: 40px;
 }
 
-.File {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.DeleteButton {
-  flex: 0 0 auto;
-  border: 0;
-  background: transparent;
-  display: grid;
-  place-content: center;
-  font-size: 24px;
-  margin: 0;
-  padding: 0;
-  color: rgba(0, 0, 0, 0.4);
-  cursor: pointer;
-}
-
-.DeleteButton:hover {
-  color: rgb(255, 89, 89);
-}
-
-.DeleteButton svg {
-  pointer-events: none;
-}
-
-.IconContainer {
-  flex: 0 0 auto;
-  display: grid;
-  place-content: center;
-  width: 24px;
-  font-size: 22px;
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.PreviewIcon {
-  width: auto;
-  height: auto;
-  max-width: 100%;
-  max-height: 24px;
-  border: 1px solid black;
-}
-
-.Path {
-  background: rgba(0, 0, 0, 0.3);
-  padding: 3px 8px;
-  border-radius: 8px;
-  user-select: none;
-}
-
 .HeaderLink {
   display: none;
   margin-left: 0;
@@ -268,7 +149,7 @@
 @media (max-width: 767px) {
   .Forge {
     grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: auto 1fr auto;
     padding: 12px;
     gap: 12px;
   }
@@ -284,6 +165,10 @@
 
   .HeaderLink {
     display: grid;
+  }
+
+  .Footer {
+    grid-column: span 1;
   }
 
   .FooterLink {

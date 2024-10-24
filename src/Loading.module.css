@@ -1,0 +1,30 @@
+.LoadingBackdrop {
+  display: flex;
+  align-items: stretch;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 400px;
+  height: 120px;
+  transform: translate(-50%, -50%);
+  background: url("../public/fire1.gif");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  border-radius: 10px;
+  z-index: 2;
+  text-align: center;
+  overflow: hidden;
+}
+
+.LoadingText {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  color: rgb(232, 194, 154);
+  background: rgba(0, 0, 0, 0.95);
+  mix-blend-mode: hard-light;
+  font-family: var(--font-alagard);
+  font-size: 40px;
+  text-shadow: 0 -3px 10px rgb(251, 82, 30);
+}

@@ -1,0 +1,76 @@
+.DownloadForm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 0 auto;
+}
+
+.NameInput {
+  position: relative;
+  font-size: 18px;
+  font-family: var(--font-lora);
+  font-weight: 500;
+  font-style: italic;
+  line-height: 1.25;
+}
+
+.NameInput input {
+  --dark-bevel: rgb(37, 34, 29);
+  --light-bevel: rgb(108, 101, 88);
+  display: block;
+  min-width: 240px;
+  max-width: 100%;
+  min-height: 46px;
+  background: #fff;
+  border-top: 3px solid var(--dark-bevel);
+  border-left: 3px solid var(--dark-bevel);
+  border-bottom: 3px solid var(--light-bevel);
+  border-right: 3px solid var(--light-bevel);
+  color: #333;
+  font-size: inherit;
+  font-family: inherit;
+  font-weight: inherit;
+  font-style: inherit;
+  line-height: inherit;
+  padding: 2px 50px 2px 0;
+  text-indent: 10px;
+}
+
+.NameInput::after {
+  display: grid;
+  place-content: center;
+  content: ".vl2";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 50px;
+  color: #999;
+}
+
+.DownloadButton {
+  border: 0;
+  margin: 0;
+  padding: 0 12px 0 12px;
+  min-width: 128px;
+  min-height: 46px;
+  font-family: var(--font-alagard), monospace;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  border-radius: 2px;
+  background: url("../public/button.png") transparent;
+  background-repeat: no-repeat;
+  background-size: 150% 190%;
+  background-position: 50% 50%;
+  border-top: 3px solid rgba(255, 145, 105, 0.5);
+  border-left: 3px solid rgba(255, 178, 150, 0.5);
+  border-right: 3px solid rgba(36, 14, 14, 0.7);
+  border-bottom: 3px solid rgba(36, 14, 14, 0.7);
+  color: #ffffff;
+  text-shadow: 0 0 5px rgba(255, 226, 82, 0.358), 2px 3px 0 rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}

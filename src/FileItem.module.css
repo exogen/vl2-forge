@@ -1,0 +1,50 @@
+.File {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.IconContainer {
+  flex: 0 0 auto;
+  display: grid;
+  place-content: center;
+  width: 24px;
+  font-size: 22px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.PreviewIcon {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 24px;
+  border: 1px solid black;
+}
+
+.Path {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 3px 8px;
+  border-radius: 8px;
+  user-select: none;
+}
+
+.DeleteButton {
+  flex: 0 0 auto;
+  border: 0;
+  background: transparent;
+  display: grid;
+  place-content: center;
+  font-size: 24px;
+  margin: 0;
+  padding: 0;
+  color: rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+}
+
+.DeleteButton:hover {
+  color: rgb(255, 89, 89);
+}
+
+.DeleteButton svg {
+  pointer-events: none;
+}

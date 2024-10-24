@@ -24,7 +24,9 @@ body {
   flex-direction: column;
   margin: 0;
   padding: 0;
-  min-height: 100vh;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
   background-color: #699697;
   background-image: url("../public/noise.png"),
     linear-gradient(to bottom, #5be9ee 0%, #1e4172 100%);
