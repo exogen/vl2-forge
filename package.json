@@ -12,21 +12,21 @@
     "clean": "rimraf .next docs",
     "deploy": "npm run build && git add -f docs && git commit -m \"Deploy\" && git push",
     "prebuild": "npm run clean",
-    "start": "next dev"
+    "start": "npm run dev"
   },
   "dependencies": {
     "file-saver": "^2.0.5",
     "jszip": "^3.10.1",
     "lodash.orderby": "^4.6.0",
-    "next": "^14.2.15",
+    "next": "^15.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-dropzone": "^14.2.9",
+    "react-dropzone": "^14.2.10",
     "react-icons": "^5.3.0"
   },
   "devDependencies": {
-    "@types/node": "22.7.5",
-    "@types/react": "18.3.11",
+    "@types/node": "22.8.1",
+    "@types/react": "18.3.12",
     "rimraf": "^6.0.1",
     "typescript": "^5.6.3"
   }
