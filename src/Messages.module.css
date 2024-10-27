@@ -1,0 +1,69 @@
+.MessagesButton,
+.CloseButton {
+  background: transparent;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  place-content: center;
+  width: 40px;
+  height: 40px;
+  font-size: 32px;
+  color: rgba(255, 255, 255, 0.3);
+  transition: color 200ms;
+  cursor: pointer;
+}
+
+.MessagesButton.NewMessages {
+  color: rgba(255, 162, 43, 1);
+}
+
+.MessagesButton svg {
+  pointer-events: none;
+}
+
+.CloseButton {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}
+
+.CloseButton:hover {
+  color: rgba(255, 255, 255, 1);
+}
+
+.ActionLog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  font-size: 12px;
+  background: rgba(0, 0, 0, 0.9);
+  color: rgba(255, 162, 43, 1);
+  padding: 32px;
+  overflow: auto;
+  z-index: 2;
+}
+
+.ActionLog del {
+  font-style: normal;
+  text-decoration: none;
+  border-bottom: 2px solid red;
+}
+
+.ActionLog ins {
+  font-style: normal;
+  text-decoration: none;
+  border-bottom: 2px solid green;
+}
+
+.Path {
+  color: rgb(255, 237, 212);
+}
+
+@media (max-width: 767px) {
+  .MessagesButton {
+    display: none;
+  }
+}

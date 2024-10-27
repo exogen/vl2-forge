@@ -7,6 +7,7 @@ export type FileType = {
 };
 
 export type FileEntry = {
+  source: string | null;
   path: string;
   buffer: ArrayBuffer;
   blobUri: string | null;
@@ -145,6 +146,7 @@ export async function handleZipFile(file) {
       path = detectBestPath(path);
       const buffer = await fileObj.async("arraybuffer");
       const fileEntry = {
+        source: file.name || null,
         path,
         buffer,
         blobUri: null,
@@ -192,6 +194,7 @@ export async function handleOtherFile(file) {
     reader.readAsArrayBuffer(file);
   });
   const fileEntry = {
+    source: "direct upload",
     path,
     buffer,
     blobUri: null,

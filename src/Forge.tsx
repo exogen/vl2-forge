@@ -1,5 +1,11 @@
 "use client";
-import { useCallback, useMemo, useState, useTransition } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useTransition,
+} from "react";
 import { useDropzone } from "react-dropzone";
 import orderBy from "lodash.orderby";
 import { FaGithub } from "react-icons/fa";
@@ -8,39 +14,67 @@ import { FileItem } from "./FileItem";
 import { DownloadForm } from "./DownloadForm";
 import { handleInputFile } from "./utils";
 import styles from "./Forge.module.css";
+import { Messages } from "./Messages";
+
+const defaultFileData = {
+  files: new Map(),
+  actionLog: [],
+};
 
 export function Forge() {
   const [isPending, startTransition] = useTransition();
   const [loadingCount, setLoadingCount] = useState(0);
-  const [actionLog, setActionLog] = useState(() => []);
-  const [files, setFiles] = useState(() => new Map());
+  const [fileData, setFileData] = useState(defaultFileData);
+
+  const { files, actionLog } = fileData;
 
   const onDrop = useCallback(async (acceptedFiles) => {
     setLoadingCount((count) => count + 1);
     const actionLog = [];
     const finalMap = new Map();
+    const orderedAcceptedFiles = orderBy(
+      Array.from(acceptedFiles),
+      [(file) => (file.name ?? "").toLowerCase()],
+      ["asc"]
+    );
     const allFiles: Array<Map<string, any>> = await Promise.all(
-      acceptedFiles.map((file) => handleInputFile(file))
+      orderedAcceptedFiles.map((file) => handleInputFile(file))
     );
     allFiles.forEach((map) => {
       map.forEach((file, path) => {
         if (finalMap.has(path)) {
           actionLog.push({
-            type: "overwrite",
+            type: "BATCH_OVERWRITE",
             path,
+            oldSource: finalMap.get(path).source,
+            newSource: file.source,
           });
         }
         finalMap.set(path, file);
       });
     });
-    startTransition(() => {
-      setFiles((prevMap) => {
-        return new Map([
-          ...Array.from(prevMap.entries()),
-          ...Array.from(finalMap.entries()),
-        ]);
+    setFileData((prevData) => {
+      const { files: prevFiles, actionLog: prevActionLog } = prevData;
+      const newActionLog = [...prevActionLog, ...actionLog];
+      const newFiles = new Map(prevFiles);
+      finalMap.forEach((file, path) => {
+        if (newFiles.has(path)) {
+          newActionLog.push({
+            type: "NEW_OVERWRITE",
+            path,
+            oldSource: newFiles.get(path).source,
+            newSource: file.source,
+          });
+        }
+        newFiles.set(path, file);
       });
-      setActionLog((prevLog) => [...prevLog, ...actionLog]);
+      return {
+        files: newFiles,
+        actionLog:
+          newActionLog.length === prevActionLog.length
+            ? prevActionLog
+            : newActionLog,
+      };
     });
     setLoadingCount((count) => count - 1);
   }, []);
@@ -73,21 +107,27 @@ export function Forge() {
   );
 
   const handleDelete = useCallback((path) => {
-    setFiles((files) => {
-      const newFiles = new Map(files);
+    setFileData((prevFileData) => {
+      const newFiles = new Map(prevFileData.files);
       newFiles.delete(path);
-      return newFiles;
+      return {
+        files: newFiles,
+        actionLog: prevFileData.actionLog,
+      };
     });
   }, []);
 
   const handleRename = useCallback((oldPath, newPath) => {
-    setFiles((files) => {
-      const file = files.get(oldPath);
+    setFileData((prevFileData) => {
+      const file = prevFileData.files.get(oldPath);
       const newFile = { ...file, path: newPath };
-      const newFiles = new Map(files);
+      const newFiles = new Map(prevFileData.files);
       newFiles.delete(oldPath);
       newFiles.set(newPath, newFile);
-      return newFiles;
+      return {
+        files: newFiles,
+        actionLog: prevFileData.actionLog,
+      };
     });
   }, []);
 
@@ -144,6 +184,7 @@ export function Forge() {
           <FaGithub aria-label="GitHub" />
         </a>
         <DownloadForm fileList={fileList} />
+        <Messages actionLog={actionLog} />
       </footer>
     </section>
   );
